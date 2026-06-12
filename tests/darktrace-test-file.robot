@@ -99,7 +99,7 @@ Menu Link Should Have Correct Href And Navigate
     Hover Over Topbar Menu    ${menu_text}
 
     ${link_locator}=    Set Variable
-    ...    xpath=(//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${link_text_lowercase}") and not(ancestor-or-self::*[contains(@class, "mobile")])])[1]
+    ...    xpath=(//a[contains(@href, "${expected_url_part}") and not(ancestor-or-self::*[contains(@class, "mobile")])])[1]
 
     Page Should Contain Element    ${link_locator}
 
@@ -109,6 +109,10 @@ Menu Link Should Have Correct Href And Navigate
     Should Not Be Equal As Strings    ${href}    \#
     Should Not Contain    ${href}    javascript
     Should Contain    ${href}    ${expected_url_part}
+
+    ${actual_text}=    Get Text    ${link_locator}
+    ${actual_text_lowercase}=    Convert To Lower Case    ${actual_text}
+    Should Contain    ${actual_text_lowercase}    ${link_text_lowercase}
 
     ${element}=    Get WebElement    ${link_locator}
     Execute Javascript    arguments[0].click();    ARGUMENTS    ${element}
