@@ -1,0 +1,29 @@
+name: Robot Framework Tests
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  robot-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Create reports directory
+        run: mkdir -p reports
+
+      - name: Run Robot Framework tests with Docker
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}/reports:/opt/robotframework/reports" \
+            -v "${{ github.workspace }}/tests:/opt/robotframework/tests" \
+            ppodgorsek/robot-framework:latest
+
+      - name: Upload Robot reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-framework-reports
+          path: reports/
