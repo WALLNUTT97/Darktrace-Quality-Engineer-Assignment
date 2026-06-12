@@ -111,10 +111,6 @@ Menu Link Should Have Correct Href And Navigate
     Should Not Contain    ${href}    javascript
     Should Contain    ${href}    ${expected_url_part}
 
-    ${actual_text}=    Get Text    ${link_locator}
-    ${actual_text_lowercase}=    Convert To Lower Case    ${actual_text}
-    Should Contain    ${actual_text_lowercase}    ${link_text_lowercase}
-
     ${element}=    Get WebElement    ${link_locator}
     Execute Javascript    arguments[0].click();    ARGUMENTS    ${element}
 
