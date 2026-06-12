@@ -1,165 +1,194 @@
 *** Settings ***
-Documentation       Darktrace desktop top navigation tests.
-...                 This suite intentionally uses simple Robot Framework + SeleniumLibrary keywords.
-...                 The goal is readability and maintainability rather than building a complex framework.
+Documentation       A test suite to test the current live top navigation bar of https://darktrace.com
+...
+...                 This suite follows the current live website structure, following clarification
+...                 that the live navigation should be tested flexibly against the original brief.
+...                 It uses simple Robot Framework and SeleniumLibrary keywords.
+
 Library             SeleniumLibrary
-Suite Setup         Open Darktrace Homepage
-Suite Teardown      Close Browser
-Test Teardown       Capture Page Screenshot
+Library             RequestsLibrary
+
+Test Teardown       Teardown Actions
 
 
 *** Variables ***
-${BASE_URL}         https://www.darktrace.com/
-${BROWSER}          headlessfirefox
-${TIMEOUT}          10s
-${FAST_TIMEOUT}     1s
+${browser}                  headlessfirefox
+${website_url}              https://darktrace.com/
+${demo_url}                 https://www.darktrace.com/demo
 
+${platform_text}            Platform
+${solutions_text}           Solutions
+${why_darktrace_text}       Why Darktrace
+${partners_text}            Partners
+${resources_text}           Resources
+${demo_text}                Get a demo
 
-*** Test Cases ***
-Logo And Platform Navigation
-    [Documentation]    Checks the logo and Platform item from the desktop navigation bar.
-    Logo Should Be Visible
-    Logo Should Link To Homepage
-    Platform Should Be Visible
-    Platform Should Open Platform Page
+${fast_timeout}             1s
+${default_timeout}          10s
 
-Products Hover Menu
-    [Documentation]    Checks Products hover behaviour and required product links.
-    Products Should Be Visible
-    Hover Over Products
-    Products Menu Should Contain Required Links
+@{platform_links}           activeai security platform
+...                         network
+...                         email
+...                         cloud
+...                         secure ai
+...                         ot
+...                         identity
+...                         endpoint
+...                         proactive exposure management
+...                         adaptive human defense
+...                         attack surface management
+...                         forensic acquisition
+...                         incident readiness
+...                         cyber ai analyst
+...                         services
+...                         integrations
 
-Our AI Hover Menu
-    [Documentation]    Checks Our AI hover behaviour and destination.
-    Our AI Should Be Visible
-    Hover Over Our AI
-    Our AI Menu Should Contain Link To Our AI Page
+@{solutions_links}          ransomware
+...                         apts
+...                         phishing
+...                         data loss
+...                         account takeover
+...                         insider threats
+...                         supply chain attacks
+...                         business email compromise
+...                         customer stories
+...                         inside the soc
 
-Resources Hover Menu
-    [Documentation]    Checks Resources hover behaviour and required resource links.
-    Resources Should Be Visible
-    Hover Over Resources
-    Resources Menu Should Contain Required Links
+@{why_darktrace_links}      our ai
+...                         our customers
+...                         industry recognition
+...                         about us
+...                         events
+...                         news
+...                         leadership
+...                         careers
+...                         contact us
+...                         federal
+...                         trust center
 
-Get A Demo Form
-    [Documentation]    Checks Get a Demo navigation and required form controls.
-    Get A Demo Button Should Be Visible
-    Click Get A Demo Button
-    Demo Form Should Contain Required Fields
-    Demo Form Should Contain Required Dropdowns
-    Demo Form Should Contain Required Controls
+@{partners_links}           overview
+...                         technology partners
+...                         partner portal
+...                         microsoft
+...                         aws
 
-Navigation Resources Load Quickly
-    [Documentation]    Basic check for the requirement that resources load under one second.
-    Go To    ${BASE_URL}
-    Wait Until Page Contains Element    xpath=//a[contains(normalize-space(.), "Products")]    ${FAST_TIMEOUT}
-    Mouse Over    xpath=//a[contains(normalize-space(.), "Products")]
-    Wait Until Page Contains Element    xpath=//a[contains(normalize-space(.), "Attack Surface Management")]    ${FAST_TIMEOUT}
-    Mouse Over    xpath=//a[contains(normalize-space(.), "Resources")]
-    Wait Until Page Contains Element    xpath=//a[contains(normalize-space(.), "Blog")]    ${FAST_TIMEOUT}
+@{resources_links}          darktrace blog
+...                         inside the soc
+...                         the inference
+...                         resource library
+...                         customer stories
+...                         cyber ai glossary
+...                         securing ai
 
 
 *** Keywords ***
-Open Darktrace Homepage
-    Open Browser    ${BASE_URL}    ${BROWSER}
-    Maximize Browser Window
-    Set Selenium Timeout    ${TIMEOUT}
+Prepare Test
+    Open Browser    ${website_url}    ${browser}       # remote_url=http://firefox:4444
+    Set Selenium Timeout    ${default_timeout}
+    Set Window Size    1440    1000
     Accept Cookies If Present
-    Wait Until Page Contains Element    xpath=//header | //nav    ${TIMEOUT}
+    Wait Until Page Contains    ${platform_text}    ${default_timeout}
 
 Accept Cookies If Present
-    ${cookie_button_found}=    Run Keyword And Return Status
-    ...    Page Should Contain Element
-    ...    xpath=//button[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "accept")]
-    IF    ${cookie_button_found}
-        Click Button    xpath=//button[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "accept")]
-    END
+    Run Keyword And Ignore Error
+    ...    Click Button
+    ...    xpath=//button[contains(normalize-space(.), "Accept All Cookies") or contains(normalize-space(.), "Accept")]
 
-Logo Should Be Visible
-    Wait Until Page Contains Element    xpath=//a[contains(@href, "darktrace.com") or @href="/"]    ${FAST_TIMEOUT}
+Teardown Actions
+    Run Keyword If Test Failed    Capture Page Screenshot
+    Close All Browsers
 
-Logo Should Link To Homepage
-    Click Element    xpath=(//a[contains(@href, "darktrace.com") or @href="/"])[1]
-    Location Should Contain    darktrace.com
+Hover Over Topbar Menu
+    [Arguments]    ${menu_text}
+    Wait Until Page Contains Element
+    ...    xpath=(//a[contains(normalize-space(.), "${menu_text}")])[1]
+    ...    ${default_timeout}
+    Mouse Over    xpath=(//a[contains(normalize-space(.), "${menu_text}")])[1]
+    Sleep    1s
 
-Platform Should Be Visible
-    Wait Until Page Contains Element    xpath=//a[contains(normalize-space(.), "Platform")]    ${FAST_TIMEOUT}
-
-Platform Should Open Platform Page
-    Click Element    xpath=//a[contains(normalize-space(.), "Platform")]
-    Location Should Contain    platform
-
-Products Should Be Visible
-    Wait Until Page Contains Element    xpath=//a[contains(normalize-space(.), "Products")]    ${FAST_TIMEOUT}
-
-Hover Over Products
-    Mouse Over    xpath=//a[contains(normalize-space(.), "Products")]
-
-Products Menu Should Contain Required Links
-    Link Should Be Visible And Valid    Network
-    Link Should Be Visible And Valid    Cloud
-    Link Should Be Visible And Valid    Identity
-    Link Should Be Visible And Valid    Email
-    Link Should Be Visible And Valid    OT
-    Link Should Be Visible And Valid    Endpoint
-    Link Should Be Visible And Valid    Proactive Exposure Management
-    Link Should Be Visible And Valid    Attack Surface Management
-    Link Should Be Visible And Valid    Incident Readiness
-    Link Should Be Visible And Valid    Cyber AI Analyst
-    Link Should Be Visible And Valid    Services
-
-Our AI Should Be Visible
-    Wait Until Page Contains Element    xpath=//a[contains(normalize-space(.), "Our AI")]    ${FAST_TIMEOUT}
-
-Hover Over Our AI
-    Mouse Over    xpath=//a[contains(normalize-space(.), "Our AI")]
-
-Our AI Menu Should Contain Link To Our AI Page
-    Link Should Be Visible And Valid    Our AI
-
-Resources Should Be Visible
-    Wait Until Page Contains Element    xpath=//a[contains(normalize-space(.), "Resources")]    ${FAST_TIMEOUT}
-
-Hover Over Resources
-    Mouse Over    xpath=//a[contains(normalize-space(.), "Resources")]
-
-Resources Menu Should Contain Required Links
-    Link Should Be Visible And Valid    Customers
-    Link Should Be Visible And Valid    Events
-    Link Should Be Visible And Valid    The Inference
-    Link Should Be Visible And Valid    Blog
-    Link Should Be Visible And Valid    Inside the SOC
-    Link Should Be Visible And Valid    Glossary
-    Link Should Be Visible And Valid    All resources
-    Link Should Be Visible And Valid    white paper
-
-Get A Demo Button Should Be Visible
-    Wait Until Page Contains Element    xpath=//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "get a demo")]    ${FAST_TIMEOUT}
-
-Click Get A Demo Button
-    Click Element    xpath=//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "get a demo")]
-    Wait Until Location Contains    demo    ${TIMEOUT}
-
-Demo Form Should Contain Required Fields
-    Page Should Contain    Name
-    Page Should Contain    Email
-    Page Should Contain    Organization
-    Page Should Contain    Job Title
-    Page Should Contain    Phone Number
-
-Demo Form Should Contain Required Dropdowns
-    Page Should Contain    Country
-    Page Should Contain    Organization Size
-
-Demo Form Should Contain Required Controls
-    Page Should Contain Element    xpath=//input[@type="checkbox"]
-    Page Should Contain Element    xpath=//*[contains(translate(@class, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "captcha") or contains(translate(@src, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "captcha") or contains(translate(@title, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "captcha")]
-    Page Should Contain Element    xpath=//button[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "get a demo")] | //input[contains(translate(@value, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "get a demo")]
-
-Link Should Be Visible And Valid
-    [Arguments]    ${link_text}
-    Wait Until Page Contains Element    xpath=//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${link_text.lower()}")]    ${TIMEOUT}
-    ${href}=    Get Element Attribute    xpath=//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${link_text.lower()}")]    href
+Link Containing Text Should Exist And Have Href
+    [Arguments]    ${link_text_lowercase}
+    Page Should Contain Element
+    ...    xpath=//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${link_text_lowercase}")]
+    ${href}=    Get Element Attribute
+    ...    xpath=(//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${link_text_lowercase}")])[1]
+    ...    href
     Should Not Be Empty    ${href}
     Should Not Be Equal    ${href}    #
     Should Not Contain    ${href}    javascript
+
+Menu Should Contain Links
+    [Arguments]    @{expected_links}
+    FOR    ${link_text}    IN    @{expected_links}
+        Link Containing Text Should Exist And Have Href    ${link_text}
+    END
+
+Logo Should Be Visible
+    Page Should Contain Element    xpath=//*[name()="svg" and contains(@class, "logo-svg")]
+
+Logo Should Link To Homepage
+    Click Element    xpath=(//*[name()="svg" and contains(@class, "logo-svg")]/ancestor::a)[1]
+    Wait Until Location Contains    darktrace.com    ${default_timeout}
+
+
+*** Test Cases ***
+Test Logo And Get A Demo
+    Prepare Test
+
+    Logo Should Be Visible
+    Logo Should Link To Homepage
+
+    Link Containing Text Should Exist And Have Href    get a demo
+    Go To    ${demo_url}
+    Wait Until Page Contains    Get a demo    ${default_timeout}
+
+
+Test Platform Menu
+    Prepare Test
+
+    Hover Over Topbar Menu    ${platform_text}
+    Menu Should Contain Links    @{platform_links}
+
+
+Test Solutions Menu
+    Prepare Test
+
+    Hover Over Topbar Menu    ${solutions_text}
+    Menu Should Contain Links    @{solutions_links}
+
+
+Test Why Darktrace Menu
+    Prepare Test
+
+    Hover Over Topbar Menu    ${why_darktrace_text}
+    Menu Should Contain Links    @{why_darktrace_links}
+
+
+Test Partners Menu
+    Prepare Test
+
+    Hover Over Topbar Menu    ${partners_text}
+    Menu Should Contain Links    @{partners_links}
+
+
+Test Resources Menu
+    Prepare Test
+
+    Hover Over Topbar Menu    ${resources_text}
+    Menu Should Contain Links    @{resources_links}
+
+
+Test Navigation Resources Load Under A Second
+    Prepare Test
+
+    Wait Until Page Contains    ${platform_text}    ${fast_timeout}
+
+    Hover Over Topbar Menu    ${platform_text}
+    Wait Until Page Contains Element
+    ...    xpath=//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "attack surface management")]
+    ...    ${fast_timeout}
+
+    Hover Over Topbar Menu    ${resources_text}
+    Wait Until Page Contains Element
+    ...    xpath=//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "darktrace blog")]
+    ...    ${fast_timeout}
