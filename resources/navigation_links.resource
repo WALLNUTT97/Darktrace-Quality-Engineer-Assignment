@@ -23,7 +23,7 @@
 ...    phishing=/solutions/phishing
 ...    data loss=/solutions/data-loss
 ...    account takeover=/solutions/account-takeover
-...    insider threats=/solutions/insider-threats
+...    insider threats=/solutions/insider-threat
 ...    supply chain attacks=/solutions/supply-chain-attack
 ...    business email compromise=/solutions/business-email-compromise
 ...    customer stories=/customers

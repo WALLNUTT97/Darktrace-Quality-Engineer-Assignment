@@ -141,19 +141,6 @@ Test Platform Menu Links Navigate Correctly
     END
 
 
-Test Platform Menu Links Navigate Correctly
-    Prepare Test
-
-    FOR    ${link_text}    ${expected_url_part}    IN    &{platform_links}
-        Log    Testing Platform link: ${link_text} -> ${expected_url_part}
-        Run Keyword And Continue On Failure
-        ...    Menu Link Should Have Correct Href And Navigate
-        ...    ${platform_text}
-        ...    ${link_text}
-        ...    ${expected_url_part}
-    END
-
-
 Test Solutions Menu Links Navigate Correctly
     Prepare Test
 
