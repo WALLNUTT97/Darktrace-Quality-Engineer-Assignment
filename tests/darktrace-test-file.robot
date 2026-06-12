@@ -140,6 +140,61 @@ Test Platform Menu Links Navigate Correctly
         ...    ${expected_url_part}
     END
 
+
+Test Platform Menu Links Navigate Correctly
+    Prepare Test
+
+    FOR    ${link_text}    ${expected_url_part}    IN    &{platform_links}
+        Log    Testing Platform link: ${link_text} -> ${expected_url_part}
+        Run Keyword And Continue On Failure
+        ...    Menu Link Should Have Correct Href And Navigate
+        ...    ${platform_text}
+        ...    ${link_text}
+        ...    ${expected_url_part}
+    END
+
+
+Test Solutions Menu Links Navigate Correctly
+    Prepare Test
+
+    FOR    ${link_text}    ${expected_url_part}    IN    &{solutions_links}
+        Log    Testing Platform link: ${link_text} -> ${expected_url_part}
+        Run Keyword And Continue On Failure
+        ...    Menu Link Should Have Correct Href And Navigate
+        ...    ${solutions_text}
+        ...    ${link_text}
+        ...    ${expected_url_part}
+    END
+
+
+Test Why Darktrace Menu Links Navigate Correctly
+    Prepare Test
+
+    FOR    ${link_text}    ${expected_url_part}    IN    &{why_darktrace_links}
+        Log    Testing Platform link: ${link_text} -> ${expected_url_part}
+        Run Keyword And Continue On Failure
+        ...    Menu Link Should Have Correct Href And Navigate
+        ...    ${why_darktrace_text}
+        ...    ${link_text}
+        ...    ${expected_url_part}
+    END
+
+
+Test Resource Menu Links Navigate Correctly
+    Prepare Test
+
+    FOR    ${link_text}    ${expected_url_part}    IN    &{resources_links}
+        Log    Testing Platform link: ${link_text} -> ${expected_url_part}
+        Run Keyword And Continue On Failure
+        ...    Menu Link Should Have Correct Href And Navigate
+        ...    ${resources_text}
+        ...    ${link_text}
+        ...    ${expected_url_part}
+    END
+
+
+
+
 Test Get A Demo Hyperlink
     Prepare Test
 
