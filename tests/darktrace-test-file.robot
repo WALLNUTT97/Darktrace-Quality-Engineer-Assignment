@@ -98,20 +98,20 @@ Menu Link Should Have Correct Href And Navigate
 
     Hover Over Topbar Menu    ${menu_text}
 
-    Page Should Contain Element
-    ...    xpath=//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${link_text_lowercase}")]
+    ${link_locator}=    Set Variable
+    ...    xpath=(//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${link_text_lowercase}") and not(ancestor-or-self::*[contains(@class, "mobile")])])[1]
 
-    ${href}=    Get Element Attribute
-    ...    xpath=(//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${link_text_lowercase}")])[1]
-    ...    href
+    Wait Until Element Is Visible    ${link_locator}    ${default_timeout}
+
+    ${href}=    Get Element Attribute    ${link_locator}    href
 
     Should Not Be Empty    ${href}
     Should Not Be Equal As Strings    ${href}    \#
     Should Not Contain    ${href}    javascript
     Should Contain    ${href}    ${expected_url_part}
 
-    Click Element
-    ...    xpath=(//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${link_text_lowercase}")])[1]
+    ${element}=    Get WebElement    ${link_locator}
+    Execute Javascript    arguments[0].click();    ARGUMENTS    ${element}
 
     Wait Until Location Contains    ${expected_url_part}    ${default_timeout}
 
