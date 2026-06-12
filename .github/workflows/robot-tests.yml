@@ -7,12 +7,15 @@ on:
 jobs:
   robot-tests:
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Create reports directory
-        run: mkdir -p reports
+      - name: Prepare reports directory
+        run: |
+          mkdir -p reports
+          chmod -R 777 reports
 
       - name: Run Robot Framework tests with Docker
         run: |
