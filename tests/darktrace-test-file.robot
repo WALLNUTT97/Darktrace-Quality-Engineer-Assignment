@@ -128,6 +128,13 @@ Test Logo And Get A Demo
     Wait Until Page Contains    Get a demo    ${default_timeout}
 
 
+Test Platform Menu
+    Prepare Test
+
+    Hover Over Topbar Menu    ${platform_text}
+    Menu Should Contain Links    @{platform_links}
+
+
 Test Platform Menu Links Navigate Correctly
     Prepare Test
 
@@ -139,6 +146,13 @@ Test Platform Menu Links Navigate Correctly
         ...    ${link_text}
         ...    ${expected_url_part}
     END
+
+
+Test Solutions Menu
+    Prepare Test
+
+    Hover Over Topbar Menu    ${solutions_text}
+    Menu Should Contain Links    @{solutions_links}
 
 
 Test Solutions Menu Links Navigate Correctly
@@ -154,6 +168,13 @@ Test Solutions Menu Links Navigate Correctly
     END
 
 
+Test Why Darktrace Menu
+    Prepare Test
+
+    Hover Over Topbar Menu    ${why_darktrace_text}
+    Menu Should Contain Links    @{why_darktrace_links}
+
+
 Test Why Darktrace Menu Links Navigate Correctly
     Prepare Test
 
@@ -165,6 +186,13 @@ Test Why Darktrace Menu Links Navigate Correctly
         ...    ${link_text}
         ...    ${expected_url_part}
     END
+
+
+Test Resources Menu
+    Prepare Test
+
+    Hover Over Topbar Menu    ${resources_text}
+    Menu Should Contain Links    @{resources_links}
 
 
 Test Resource Menu Links Navigate Correctly
@@ -180,8 +208,6 @@ Test Resource Menu Links Navigate Correctly
     END
 
 
-
-
 Test Get A Demo Hyperlink
     Prepare Test
 
@@ -191,34 +217,6 @@ Test Get A Demo Hyperlink
     ...    xpath=(//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "get a demo")])[1]
 
     Wait Until Location Contains    /demo    ${default_timeout}
-
-
-Test Solutions Menu
-    Prepare Test
-
-    Hover Over Topbar Menu    ${solutions_text}
-    Menu Should Contain Links    @{solutions_links}
-
-
-Test Why Darktrace Menu
-    Prepare Test
-
-    Hover Over Topbar Menu    ${why_darktrace_text}
-    Menu Should Contain Links    @{why_darktrace_links}
-
-
-Test Partners Menu
-    Prepare Test
-
-    Hover Over Topbar Menu    ${partners_text}
-    Menu Should Contain Links    @{partners_links}
-
-
-Test Resources Menu
-    Prepare Test
-
-    Hover Over Topbar Menu    ${resources_text}
-    Menu Should Contain Links    @{resources_links}
 
 
 Test Navigation Resources Load Under A Second

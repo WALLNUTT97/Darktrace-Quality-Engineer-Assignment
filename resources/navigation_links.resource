@@ -41,7 +41,6 @@
 ...    contact us=/contact
 ...    federal=/federal
 ...    trust center=/trust
-...    inside darktrace=/resources/gartner-ndr-magic-quadrant-2025
 ...    darktrace live=/live
 
 &{resources_links}
@@ -51,7 +50,6 @@
 ...    customer stories=/customers
 ...    cyber ai glossary=/cyber-ai-glossary
 ...    securing ai=/securing-ai
-...    the state of ai=/resource/the-state-of-ai-cybersecurity-2026
 
 &{demo_url}                 
 ...    demo=https://www.darktrace.com/demo
