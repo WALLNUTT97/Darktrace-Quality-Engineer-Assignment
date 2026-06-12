@@ -3,7 +3,9 @@ Documentation       A test suite to test the current live top navigation bar of 
 ...
 ...                 This suite follows the current live website structure, following clarification
 ...                 that the live navigation should be tested flexibly against the original brief.
-...                 It uses simple Robot Framework and SeleniumLibrary keywords.
+...
+...                 The site contains duplicate hidden/mobile navigation elements, so the locators
+...                 avoid elements with mobile classes where possible.
 
 Library             SeleniumLibrary
 Library             RequestsLibrary
@@ -91,19 +93,24 @@ Prepare Test
 
 Accept Cookies If Present
     Run Keyword And Ignore Error
-    ...    Click Button
-    ...    xpath=//button[contains(normalize-space(.), "Accept All Cookies") or contains(normalize-space(.), "Accept")]
+    ...    Click Element
+    ...    xpath=//button[contains(normalize-space(.), "Accept Cookies") or contains(normalize-space(.), "Accept All Cookies") or contains(normalize-space(.), "Accept")]
 
 Teardown Actions
     Run Keyword If Test Failed    Capture Page Screenshot
     Close All Browsers
 
+Visible Topbar Text Should Exist
+    [Arguments]    ${menu_text}
+    Wait Until Element Is Visible
+    ...    xpath=(//*[self::a or self::div or self::span][normalize-space(.)="${menu_text}" and not(ancestor-or-self::*[contains(@class, "mobile")])])[1]
+    ...    ${default_timeout}
+
 Hover Over Topbar Menu
     [Arguments]    ${menu_text}
-    Wait Until Page Contains Element
-    ...    xpath=(//a[contains(normalize-space(.), "${menu_text}")])[1]
-    ...    ${default_timeout}
-    Mouse Over    xpath=(//a[contains(normalize-space(.), "${menu_text}")])[1]
+    Visible Topbar Text Should Exist    ${menu_text}
+    Mouse Over
+    ...    xpath=(//*[self::a or self::div or self::span][normalize-space(.)="${menu_text}" and not(ancestor-or-self::*[contains(@class, "mobile")])])[1]
     Sleep    1s
 
 Link Containing Text Should Exist And Have Href
@@ -124,11 +131,18 @@ Menu Should Contain Links
     END
 
 Logo Should Be Visible
-    Page Should Contain Element    xpath=//*[name()="svg" and contains(@class, "logo-svg")]
+    Wait Until Element Is Visible
+    ...    xpath=(//*[name()="svg" and contains(@class, "logo-svg") and not(ancestor-or-self::*[contains(@class, "mobile")])])[1]
+    ...    ${default_timeout}
 
 Logo Should Link To Homepage
-    Click Element    xpath=(//*[name()="svg" and contains(@class, "logo-svg")]/ancestor::a)[1]
+    Click Element
+    ...    xpath=(//*[name()="svg" and contains(@class, "logo-svg") and not(ancestor-or-self::*[contains(@class, "mobile")])]/ancestor::a)[1]
     Wait Until Location Contains    darktrace.com    ${default_timeout}
+
+Get A Demo Should Be Visible And Valid
+    Visible Topbar Text Should Exist    ${demo_text}
+    Link Containing Text Should Exist And Have Href    get a demo
 
 
 *** Test Cases ***
@@ -138,7 +152,7 @@ Test Logo And Get A Demo
     Logo Should Be Visible
     Logo Should Link To Homepage
 
-    Link Containing Text Should Exist And Have Href    get a demo
+    Get A Demo Should Be Visible And Valid
     Go To    ${demo_url}
     Wait Until Page Contains    Get a demo    ${default_timeout}
 
