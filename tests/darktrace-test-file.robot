@@ -90,6 +90,36 @@ Get A Demo Should Be Visible And Valid
     Visible Topbar Text Should Exist    ${demo_text}
     Link Containing Text Should Exist And Have Href    get a demo
 
+Logo Image Should Load Under One Second
+    Wait Until Element Is Visible
+    ...    xpath=(//*[name()="svg" and contains(@class, "logo-svg") and not(ancestor-or-self::*[contains(@class, "mobile")])])[1]
+    ...    ${fast_timeout}
+
+
+Logo Image Should Be Correct
+    Page Should Contain Element
+    ...    xpath=(//*[name()="svg" and contains(@class, "logo-svg") and not(ancestor-or-self::*[contains(@class, "mobile")])])[1]
+
+
+Logo Hyperlink Should Be Valid
+    ${href}=    Get Element Attribute
+    ...    xpath=(//*[name()="svg" and contains(@class, "logo-svg") and not(ancestor-or-self::*[contains(@class, "mobile")])]/ancestor::a)[1]
+    ...    href
+
+    Should Not Be Empty    ${href}
+    Should Not Be Equal As Strings    ${href}    \#
+    Should Not Contain    ${href}    javascript
+    Should Contain    ${href}    darktrace.com
+
+
+Logo Should Navigate To Homepage
+    ${logo_link}=    Get WebElement
+    ...    xpath=(//*[name()="svg" and contains(@class, "logo-svg") and not(ancestor-or-self::*[contains(@class, "mobile")])]/ancestor::a)[1]
+
+    Execute Javascript    arguments[0].click();    ARGUMENTS    ${logo_link}
+
+    Wait Until Location Contains    darktrace.com    ${default_timeout}
+
 Menu Link Should Have Correct Href And Navigate
     [Arguments]    ${menu_text}    ${link_text_lowercase}    ${expected_url_part}
 
@@ -116,16 +146,34 @@ Menu Link Should Have Correct Href And Navigate
 
     Wait Until Location Contains    ${expected_url_part}    ${default_timeout}
 
+Topbar Link Should Have Correct Href And Navigate
+    [Arguments]    ${link_text_lowercase}    ${expected_url_part}
+
+    ${link_locator}=    Set Variable
+    ...    xpath=(//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${link_text_lowercase}") and not(ancestor-or-self::*[contains(@class, "mobile")])])[1]
+
+    Page Should Contain Element    ${link_locator}
+
+    ${href}=    Get Element Attribute    ${link_locator}    href
+
+    Should Not Be Empty    ${href}
+    Should Not Be Equal As Strings    ${href}    \#
+    Should Not Contain    ${href}    javascript
+    Should Contain    ${href}    ${expected_url_part}
+
+    ${element}=    Get WebElement    ${link_locator}
+    Execute Javascript    arguments[0].click();    ARGUMENTS    ${element}
+
+    Wait Until Location Contains    ${expected_url_part}    ${default_timeout}
+
 *** Test Cases ***
-Test Logo And Get A Demo
+Test Logo Image And Homepage Link
     Prepare Test
 
-    Logo Should Be Visible
-    Logo Should Link To Homepage
-
-    Get A Demo Should Be Visible And Valid
-    Go To    ${demo_url}
-    Wait Until Page Contains    Get a demo    ${default_timeout}
+    Logo Image Should Load Under One Second
+    Logo Image Should Be Correct
+    Logo Hyperlink Should Be Valid
+    Logo Should Navigate To Homepage
 
 
 Test Platform Menu
@@ -211,12 +259,7 @@ Test Resource Menu Links Navigate Correctly
 Test Get A Demo Hyperlink
     Prepare Test
 
-    Navigation Links Should Go To Expected Destinations    &{topbar_cta_links}
-
-    Click Element
-    ...    xpath=(//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "get a demo")])[1]
-
-    Wait Until Location Contains    /demo    ${default_timeout}
+    Topbar Link Should Have Correct Href And Navigate    get a demo    /demo
 
 
 Test Navigation Resources Load Under A Second
