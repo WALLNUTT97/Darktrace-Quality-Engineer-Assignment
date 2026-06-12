@@ -9,6 +9,7 @@ Documentation       A test suite to test the current live top navigation bar of 
 
 Library             SeleniumLibrary
 Library             RequestsLibrary
+Resource            ../resources/navigation_links.resource
 
 Test Teardown       Teardown Actions
 
@@ -21,67 +22,11 @@ ${demo_url}                 https://www.darktrace.com/demo
 ${platform_text}            Platform
 ${solutions_text}           Solutions
 ${why_darktrace_text}       Why Darktrace
-${partners_text}            Partners
 ${resources_text}           Resources
 ${demo_text}                Get a demo
 
 ${fast_timeout}             1s
 ${default_timeout}          10s
-
-@{platform_links}           activeai security platform
-...                         network
-...                         email
-...                         cloud
-...                         secure ai
-...                         ot
-...                         identity
-...                         endpoint
-...                         proactive exposure management
-...                         adaptive human defense
-...                         attack surface management
-...                         forensic acquisition
-...                         incident readiness
-...                         cyber ai analyst
-...                         services
-...                         integrations
-
-@{solutions_links}          ransomware
-...                         apts
-...                         phishing
-...                         data loss
-...                         account takeover
-...                         insider threats
-...                         supply chain attacks
-...                         business email compromise
-...                         customer stories
-...                         inside the soc
-
-@{why_darktrace_links}      our ai
-...                         our customers
-...                         industry recognition
-...                         about us
-...                         events
-...                         news
-...                         leadership
-...                         careers
-...                         contact us
-...                         federal
-...                         trust center
-
-@{partners_links}           overview
-...                         technology partners
-...                         partner portal
-...                         microsoft
-...                         aws
-
-@{resources_links}          darktrace blog
-...                         inside the soc
-...                         the inference
-...                         resource library
-...                         customer stories
-...                         cyber ai glossary
-...                         securing ai
-
 
 *** Keywords ***
 Prepare Test
@@ -144,6 +89,31 @@ Get A Demo Should Be Visible And Valid
     Visible Topbar Text Should Exist    ${demo_text}
     Link Containing Text Should Exist And Have Href    get a demo
 
+Menu Link Should Have Correct Href And Navigate
+    [Arguments]    ${menu_text}    ${link_text_lowercase}    ${expected_url_part}
+
+    Go To    ${website_url}
+    Accept Cookies If Present
+    Wait Until Page Contains    ${menu_text}    ${default_timeout}
+
+    Hover Over Topbar Menu    ${menu_text}
+
+    Page Should Contain Element
+    ...    xpath=//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${link_text_lowercase}")]
+
+    ${href}=    Get Element Attribute
+    ...    xpath=(//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${link_text_lowercase}")])[1]
+    ...    href
+
+    Should Not Be Empty    ${href}
+    Should Not Be Equal As Strings    ${href}    \#
+    Should Not Contain    ${href}    javascript
+    Should Contain    ${href}    ${expected_url_part}
+
+    Click Element
+    ...    xpath=(//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${link_text_lowercase}")])[1]
+
+    Wait Until Location Contains    ${expected_url_part}    ${default_timeout}
 
 *** Test Cases ***
 Test Logo And Get A Demo
@@ -157,11 +127,27 @@ Test Logo And Get A Demo
     Wait Until Page Contains    Get a demo    ${default_timeout}
 
 
-Test Platform Menu
+Test Platform Menu Links Navigate Correctly
     Prepare Test
 
-    Hover Over Topbar Menu    ${platform_text}
-    Menu Should Contain Links    @{platform_links}
+    FOR    ${link_text}    ${expected_url_part}    IN    &{platform_links}
+        Log    Testing Platform link: ${link_text} -> ${expected_url_part}
+        Run Keyword And Continue On Failure
+        ...    Menu Link Should Have Correct Href And Navigate
+        ...    ${platform_text}
+        ...    ${link_text}
+        ...    ${expected_url_part}
+    END
+
+Test Get A Demo Hyperlink
+    Prepare Test
+
+    Navigation Links Should Go To Expected Destinations    &{topbar_cta_links}
+
+    Click Element
+    ...    xpath=(//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "get a demo")])[1]
+
+    Wait Until Location Contains    /demo    ${default_timeout}
 
 
 Test Solutions Menu
