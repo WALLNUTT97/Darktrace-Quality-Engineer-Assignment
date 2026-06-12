@@ -9,6 +9,7 @@ Documentation       A test suite to test the current live top navigation bar of 
 
 Library             SeleniumLibrary
 Library             RequestsLibrary
+Library             String
 Resource            ../resources/navigation_links.resource
 
 Test Teardown       Teardown Actions
