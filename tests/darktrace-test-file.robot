@@ -8,8 +8,6 @@ Documentation       A test suite to test the current live top navigation bar of 
 ...                 avoid elements with mobile classes where possible.
 
 Library             SeleniumLibrary
-Library             RequestsLibrary
-Library             String
 Resource            ../resources/navigation_links.resource
 
 Test Teardown       Teardown Actions
@@ -18,7 +16,6 @@ Test Teardown       Teardown Actions
 *** Variables ***
 ${browser}                  headlessfirefox
 ${website_url}              https://darktrace.com/
-${demo_url}                 https://www.darktrace.com/demo
 
 ${platform_text}            Platform
 ${solutions_text}           Solutions
@@ -75,20 +72,6 @@ Menu Should Contain Links
     FOR    ${link_text}    IN    @{expected_links}
         Link Containing Text Should Exist And Have Href    ${link_text}
     END
-
-Logo Should Be Visible
-    Wait Until Element Is Visible
-    ...    xpath=(//*[name()="svg" and contains(@class, "logo-svg") and not(ancestor-or-self::*[contains(@class, "mobile")])])[1]
-    ...    ${default_timeout}
-
-Logo Should Link To Homepage
-    Click Element
-    ...    xpath=(//*[name()="svg" and contains(@class, "logo-svg") and not(ancestor-or-self::*[contains(@class, "mobile")])]/ancestor::a)[1]
-    Wait Until Location Contains    darktrace.com    ${default_timeout}
-
-Get A Demo Should Be Visible And Valid
-    Visible Topbar Text Should Exist    ${demo_text}
-    Link Containing Text Should Exist And Have Href    get a demo
 
 Logo Image Should Load Under One Second
     Wait Until Element Is Visible
@@ -207,7 +190,7 @@ Test Solutions Menu Links Navigate Correctly
     Prepare Test
 
     FOR    ${link_text}    ${expected_url_part}    IN    &{solutions_links}
-        Log    Testing Platform link: ${link_text} -> ${expected_url_part}
+        Log    Testing Solutions link: ${link_text} -> ${expected_url_part}
         Run Keyword And Continue On Failure
         ...    Menu Link Should Have Correct Href And Navigate
         ...    ${solutions_text}
@@ -227,7 +210,7 @@ Test Why Darktrace Menu Links Navigate Correctly
     Prepare Test
 
     FOR    ${link_text}    ${expected_url_part}    IN    &{why_darktrace_links}
-        Log    Testing Platform link: ${link_text} -> ${expected_url_part}
+        Log    Testing Why Darktrace link: ${link_text} -> ${expected_url_part}
         Run Keyword And Continue On Failure
         ...    Menu Link Should Have Correct Href And Navigate
         ...    ${why_darktrace_text}
@@ -247,7 +230,7 @@ Test Resource Menu Links Navigate Correctly
     Prepare Test
 
     FOR    ${link_text}    ${expected_url_part}    IN    &{resources_links}
-        Log    Testing Platform link: ${link_text} -> ${expected_url_part}
+        Log    Testing Resource link: ${link_text} -> ${expected_url_part}
         Run Keyword And Continue On Failure
         ...    Menu Link Should Have Correct Href And Navigate
         ...    ${resources_text}
