@@ -9,8 +9,8 @@ Test Teardown       Capture Page Screenshot
 
 
 *** Variables ***
-${BASE_URL}         https://www.darktrace.com
-${BROWSER}          Chrome
+${BASE_URL}         https://www.darktrace.com/
+${BROWSER}          headlessfirefox
 ${TIMEOUT}          10s
 ${FAST_TIMEOUT}     1s
 
