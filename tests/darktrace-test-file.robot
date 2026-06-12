@@ -121,7 +121,7 @@ Link Containing Text Should Exist And Have Href
     ...    xpath=(//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${link_text_lowercase}")])[1]
     ...    href
     Should Not Be Empty    ${href}
-    Should Not Be Equal    ${href}    #
+    Should Not Be Equal As Strings    ${href}    \#
     Should Not Contain    ${href}    javascript
 
 Menu Should Contain Links
