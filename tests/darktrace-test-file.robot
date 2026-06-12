@@ -101,7 +101,7 @@ Menu Link Should Have Correct Href And Navigate
     ${link_locator}=    Set Variable
     ...    xpath=(//a[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${link_text_lowercase}") and not(ancestor-or-self::*[contains(@class, "mobile")])])[1]
 
-    Wait Until Element Is Visible    ${link_locator}    ${default_timeout}
+    Page Should Contain Element    ${link_locator}
 
     ${href}=    Get Element Attribute    ${link_locator}    href
 
