@@ -22,6 +22,7 @@ jobs:
           docker run --rm \
             -v "${{ github.workspace }}/reports:/opt/robotframework/reports" \
             -v "${{ github.workspace }}/tests:/opt/robotframework/tests" \
+            -v "${{ github.workspace }}/resources:/opt/robotframework/resources" \
             ppodgorsek/robot-framework:latest
 
       - name: Upload Robot reports
