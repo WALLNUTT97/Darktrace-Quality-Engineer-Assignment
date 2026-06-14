@@ -4,16 +4,20 @@
 
 This test plan covers the revised desktop top navigation bar on the Darktrace homepage.
 
-The feature allows users to navigate from the homepage to key product, platform, AI, resource, and demo-request areas of the website.
+The feature allows users to navigate from the homepage to key platform, product, solution, company, resource, and demo-request areas of the website.
 
-The navigation bar includes the following main elements:
+After clarification from Darktrace, the current live website navigation is used as the source of truth where it differs from the original functional requirements. The original requirements are still used to guide the feature areas under test: logo image, dropdown menus, hyperlinks, and buttons.
+
+The in-scope top navigation elements are:
 
 1. The Darktrace logo, which should be visible and link back to the homepage.
-2. The `Platform` navigation item.
-3. The `Products` hover menu.
-4. The `Our AI` hover menu.
-5. The `Resources` hover menu.
-6. The `Get a Demo` button and demo request form.
+2. The `Platform` dropdown menu.
+3. The `Solutions` dropdown menu.
+4. The `Why Darktrace` dropdown menu.
+5. The `Resources` dropdown menu.
+6. The `Get a demo` button.
+
+Partners is visible on the current live navigation bar, but is excluded from this test scope because the original requirements specifically exclude Partners.
 
 The navigation bar should load quickly and should provide users with a reliable way to access the required pages and resources.
 
@@ -25,13 +29,14 @@ The main objectives of this test plan are to validate that the desktop top navig
 
 - Displays the required navigation elements clearly.
 - Allows users to navigate to the correct pages.
-- Opens the required hover menus when expected.
-- Contains the correct product and resource links.
-- Provides a working `Get a Demo` path.
-- Displays the required demo request form fields.
-- Includes required form controls such as marketing consent, CAPTCHA, and submit button.
-- Loads required navigation resources within the expected performance threshold.
+- Opens the required dropdown menus when hovered.
+- Contains the expected navigation links and CTA-style links/buttons.
+- Provides a working `Get a demo` navigation path.
+- Avoids invalid or placeholder destinations such as empty href values, `#`, or `javascript:void(0)`.
+- Loads required navigation content within the expected performance threshold.
 - Remains reliable, accessible, and usable across supported desktop browsers.
+
+The detailed demo request form is not the focus of this test plan because the feature under test is the top navigation bar. The `Get a demo` button is tested by confirming that it is present, has a valid destination, and navigates correctly when clicked.
 
 ---
 
@@ -41,35 +46,40 @@ The main objectives of this test plan are to validate that the desktop top navig
 
 - Desktop top navigation bar on the Darktrace homepage.
 - Logo visibility and homepage link behaviour.
-- `Platform` navigation item.
-- `Products` hover menu.
-    - Product link visibility.
-    - Product link destination validation.
-- `Our AI` hover menu.
-    - Our AI button/link visibility.
-    - Our AI destination validation.
-- `Resources` hover menu.
-    - Resource link visibility.
-    - Resource link destination validation.
-- `Get a Demo` button.
-    - Navigation to demo request page.
-    - Demo form field visibility.
-    - Demo form dropdown visibility.
-    - Marketing opt-in checkbox presence.
-    - CAPTCHA presence.
-    - Submit button presence.
-- Basic page-load and hover-menu performance checks.
+- `Platform` dropdown menu.
+    - Link visibility.
+    - Link destination validation.
+    - CTA-style link/button click behaviour.
+- `Solutions` dropdown menu.
+    - Link visibility.
+    - Link destination validation.
+    - CTA-style link/button click behaviour.
+- `Why Darktrace` dropdown menu.
+    - Link visibility.
+    - Link destination validation.
+    - CTA-style link/button click behaviour.
+- `Resources` dropdown menu.
+    - Link visibility.
+    - Link destination validation.
+    - CTA-style link/button click behaviour.
+- `Get a demo` button.
+    - Visibility in the top navigation bar.
+    - Valid href validation.
+    - Navigation to the expected demo request page.
+- Basic navigation and dropdown performance checks.
 - Basic accessibility, usability, security, compatibility, and regression checks related to the navigation bar.
 
 ### Out of scope
 
-- `Company` and `Partners` navigation items, as these are excluded from the assignment scope.
-- Full regression testing of unrelated website pages.
-- Full content validation of every product or resource page.
+- `Partners` navigation item, as this is excluded from the assignment scope.
+- `Company` as a separate top-level navigation item, as it is not part of the current live topbar structure being automated.
+- Detailed validation of the demo request form fields.
 - Full demo form submission into production systems.
 - CAPTCHA solving or bypassing.
+- Full regression testing of unrelated website pages.
+- Full content validation of every product, solution, company, or resource page.
 - Mobile navigation behaviour unless specifically requested later.
-- Visual design sign-off beyond layout and functional visibility checks.
+- Pixel-perfect visual design sign-off beyond functional visibility checks.
 
 ---
 
@@ -77,18 +87,13 @@ The main objectives of this test plan are to validate that the desktop top navig
 
 The functional requirements are clear enough to start testing, but a few areas should be clarified with the relevant teams.
 
-| Area | Question | Why it matters |
+| Area | Assumption / question | Why it matters |
 |---|---|---|
-| Live site differences | Should the test follow the supplied requirements only, or should it also validate new live-site navigation items? | The live website may contain more items than the work-sample requirements. The test should avoid failing because of unrelated extra items. |
-| URL expectations | Are exact URLs required for each nav item, or is it acceptable to validate that each item has a valid non-placeholder destination? | Impacts how strict the automation should be. Exact URLs are more brittle if marketing URLs change. |
-| Products menu | Should each listed product be a direct link, or can some be grouped under category pages? | Impacts expected results and automation selectors. |
-| Our AI menu | The requirement says the dropdown contains a single button. Should the automated test fail if the live site contains more than one item? | Impacts whether the test is strict or tolerant of additional content. |
-| Resources menu | Does “Link to the white paper” mean a specific named white paper, or any white-paper link? | Needed to validate the correct resource. |
-| Demo form | Is the `Get a Demo` form expected to open on a separate page, modal, or embedded form area? | The requirements mention a page and also a modal. This should be clarified. |
-| Form submission | Should testing stop at field validation, or should a non-production test submission be completed in a test environment? | Production form submission could create real leads or spam data. |
-| Performance | Does “all resources should load under a second” apply to the homepage, dropdowns, linked pages, or every linked resource? | Needed for realistic performance testing and pass/fail criteria. |
-| CAPTCHA | Which CAPTCHA provider should be expected? | Helps test the presence of anti-bot protection without trying to bypass it. |
-| Accessibility standard | Should the team target WCAG 2.1 AA or another standard? | Needed for clear accessibility expectations. |
+| In-scope menus | The automated test covers the current live desktop menus: `Platform`, `Solutions`, `Why Darktrace`, and `Resources`. | Keeps the test aligned with the current user experience. |
+| Excluded menus | `Partners` is excluded because the original requirements exclude it. | Prevents accidental expansion of test scope. |
+| URL expectations | The automated tests validate expected destination patterns stored in the navigation data file rather than hard-coding all link checks directly in the main test script. | Keeps the script readable and makes updates easier if live marketing URLs change. |
+| Demo request page | The topbar `Get a demo` button should navigate to the expected demo request page. Detailed form validation is treated as outside the topbar automation scope. | Avoids submitting or over-testing a live production lead form. |
+| Performance | The one-second requirement is interpreted as a navigation/dropdown content availability check, not a full performance audit of every linked page. | Gives the automated test a realistic and measurable pass/fail condition. |
 
 ---
 
@@ -96,15 +101,15 @@ The functional requirements are clear enough to start testing, but a few areas s
 
 Testing should be performed at multiple levels:
 
-- **Requirement review:** Confirm expected navigation items, hover behaviour, link destinations, demo form behaviour, and performance expectations before implementation is signed off.
+- **Requirement review:** Confirm expected navigation items, hover behaviour, link destinations, topbar button behaviour, and performance expectations before implementation is signed off.
 - **Exploratory testing:** Navigate through the desktop top nav as a real user and check that the menus feel usable and stable.
-- **UI functional testing:** Validate logo, navigation items, hover menus, links, buttons, and demo form controls.
+- **UI functional testing:** Validate logo, navigation items, hover menus, links, and buttons.
 - **Automated UI testing:** Use Robot Framework with SeleniumLibrary to cover the most valuable repeatable checks in CI/CD.
 - **Link validation:** Check that required links have valid destinations and do not use placeholder values.
 - **Regression testing:** Confirm related website navigation and homepage behaviour has not been negatively affected.
-- **Non-functional testing:** Validate performance, accessibility, usability, compatibility, and basic security concerns.
+- **Non-functional testing:** Validate performance, accessibility, usability, compatibility, and basic security concerns related to the navigation bar.
 
-The automated suite should focus on stable, high-value checks rather than trying to verify every visual design detail. Selectors should use visible text and href validation where possible, because marketing websites often use generated CSS classes that can change frequently.
+The automated suite should focus on stable, high-value checks rather than trying to verify every visual design detail. The expected link destinations are stored in a separate navigation data file so that the main Robot Framework test file remains readable and easier to maintain.
 
 ---
 
@@ -113,17 +118,9 @@ The automated suite should focus on stable, high-value checks rather than trying
 | Environment | Purpose |
 |---|---|
 | Local | Initial development and debugging of automated tests. |
-| Test/QA | Main functional and automated validation before release. |
-| Staging/pre-production | Final validation against production-like content and configuration. |
+| Test/QA | Main functional and automated validation before release, if available. |
+| Staging/pre-production | Final validation against production-like content and configuration, if available. |
 | Production smoke test | Limited post-release validation of critical navigation paths only. |
-
-Test configuration should include:
-
-- Desktop viewport, for example `1440x1000`.
-- Supported desktop browsers.
-- Stable internet connection.
-- Test data or staging configuration for the demo form if submission testing is required.
-- Browser console and network logging available for investigation.
 
 ---
 
@@ -131,13 +128,12 @@ Test configuration should include:
 
 | Data type | Examples |
 |---|---|
-| Navigation text | `Platform`, `Products`, `Our AI`, `Resources`, `Get a Demo`. |
-| Product links | `Network`, `Cloud`, `Identity`, `Email`, `OT`, `Endpoint`, `Proactive Exposure Management`, `Attack Surface Management`, `Incident Readiness & Recovery`, `Cyber AI Analyst`, `Services`. |
-| Resource links | `Customers`, `Events`, `The Inference`, `Blog`, `Inside the SOC`, `Glossary`, `All resources`, `White paper`. |
-| Demo text fields | `Name`, `Email`, `Organization`, `Job Title`, `Phone Number`. |
-| Demo dropdowns | `Country`, `Organization Size`. |
-| Demo checkbox | Marketing email consent checkbox. |
-| CAPTCHA | CAPTCHA or anti-bot protection element. |
+| Navigation text | `Platform`, `Solutions`, `Why Darktrace`, `Resources`, `Get a demo`. |
+| Platform links |  Expected Platform links are maintained in `resources/navigation_links.resource`. ||
+| Solutions links | Expected Solutions links are maintained in `resources/navigation_links.resource`. |
+| Why Darktrace links | Expected Why Darktrace links are maintained in `resources/navigation_links.resource`. |
+| Resources links | Expected Resources links are maintained in `resources/navigation_links.resource`. |
+| Topbar CTA | `Get a demo`. |
 | Invalid link examples | Empty href, `#`, `javascript:void(0)`, broken 404 destination. |
 | Browser data | Fresh session, existing cookie session, accepted-cookie session. |
 
@@ -178,22 +174,22 @@ The `Get a demo` page/form itself is not tested in detail because the form is ou
 
 Expected Platform links/buttons include:
 
-* ActiveAI Security Platform
-* Network
-* Email
-* Cloud
-* Secure AI
-* OT
-* Identity
-* Endpoint
-* Proactive Exposure Management
-* Adaptive Human Defense
-* Attack Surface Management
-* Forensic Acquisition and Investigation
-* Incident Readiness and Recovery
-* Cyber AI Analyst
-* Services
-* Integrations
+- ActiveAI Security Platform
+- Network
+- Email
+- Cloud
+- Secure AI
+- OT
+- Identity
+- Endpoint
+- Proactive Exposure Management
+- Adaptive Human Defense
+- Attack Surface Management
+- Forensic Acquisition and Investigation
+- Incident Readiness and Recovery
+- Cyber AI Analyst
+- Services
+- Integrations
 
 ---
 
@@ -294,40 +290,27 @@ Because the feature is mainly navigational, integration testing focuses on wheth
 
 - Confirm required links do not use unsafe `javascript:` hrefs.
 - Confirm linked pages use HTTPS.
-- Confirm the demo form is protected by CAPTCHA or equivalent anti-bot control.
-- Do not attempt to bypass or solve CAPTCHA in automation.
-- Confirm the demo form does not expose sensitive debug information in the page or console.
-- Confirm form validation is handled server-side as well as client-side in non-production environments.
+- Confirm required navigation links do not point to placeholder destinations.
 - Confirm external links, if any, open safely and do not introduce tabnabbing risk.
+- Avoid submitting or bypassing production forms/CAPTCHA from automated tests.
 
 ### 10.2 Performance
 
 - Homepage navigation should be visible within one second under agreed test conditions.
 - Hover menus should appear within one second of hover.
-- Required nav resources should not noticeably delay page interaction.
+- Required navigation content should not noticeably delay page interaction.
 - The automated test should avoid unnecessary full-page checks and should run efficiently in CI.
 - Any performance failure should include environment details, browser, connection, and timing evidence.
 
-### 10.3 Accessibility
-
-- Navigation links and buttons should be reachable by keyboard.
-- Dropdowns should be usable without relying only on mouse hover, if accessibility requirements demand this.
-- Interactive elements should have accessible names.
-- Focus should be visible when tabbing through the navigation.
-- Colour should not be the only indication of hover or active state.
-- Demo form fields should have accessible labels.
-- Validation errors should be readable by assistive technologies.
-
-### 10.4 Usability
+### 10.3 Usability
 
 - Users should be able to understand which nav item they are interacting with.
 - Dropdown menus should not disappear too quickly while moving the cursor.
 - Dropdown content should not overlap in a way that blocks interaction.
-- Product and resource names should be clear and readable.
-- `Get a Demo` should be visually prominent.
-- Demo form requirements should be clear before submission.
+- Navigation labels should be clear and readable.
+- `Get a demo` should be visually prominent.
 
-### 10.5 Compatibility
+### 10.4 Compatibility
 
 Test on supported desktop browser combinations, for example:
 
@@ -347,9 +330,10 @@ The following existing areas should be regression tested:
 
 - Homepage page load.
 - Existing top-navigation styling and layout.
-- Existing product page navigation.
+- Existing platform/product page navigation.
+- Existing solution page navigation.
 - Existing resource page navigation.
-- Existing demo request flow.
+- Existing demo request navigation path.
 - Cookie banner behaviour.
 - Header behaviour on scroll, if sticky navigation is supported.
 - Footer links only where affected by shared link or routing components.
@@ -358,35 +342,36 @@ The following existing areas should be regression tested:
 
 ---
 
-## 12. Automation candidates
+## 12. Automated test cases implemented
 
-Good candidates for automation:
+The following automated test cases were implemented in Robot Framework using SeleniumLibrary. The test suite focuses on the current live desktop top navigation bar and excludes Partners, as the original requirements state that Partners is out of scope.
 
-- Logo is visible and links to the homepage.
-- Platform item is visible and has a valid destination.
-- Products hover menu opens.
-- Products dropdown contains all required product links.
-- Product links have valid non-placeholder hrefs.
-- Our AI hover menu opens.
-- Our AI dropdown has a valid destination.
-- Resources hover menu opens.
-- Resources dropdown contains all required resource links.
-- Resource links have valid non-placeholder hrefs.
-- Get a Demo button is visible and opens the demo request page.
-- Demo form contains required fields.
-- Demo form contains required dropdowns.
-- Marketing opt-in checkbox is present.
-- CAPTCHA or anti-bot protection is present.
-- Submit button is present.
-- Key nav elements appear within one second.
+The expected navigation links and destinations are maintained separately in `resources/navigation_links.resource`, keeping the main Robot test file focused on test logic.
 
-Not good candidates for automation:
+| ID | Automated test case | What is tested | Expected result |
+|---|---|---|---|
+| AUTO-001 | Test Logo Image And Homepage Link | Checks that the Darktrace logo loads within one second, is the expected logo element, has a valid hyperlink, and navigates back to the homepage when clicked | Logo is visible, valid, and links to the Darktrace homepage |
+| AUTO-002 | Test Platform Menu | Opens the Platform dropdown and checks that the expected Platform links are present and have valid href values | Platform dropdown opens and expected links are present |
+| AUTO-003 | Test Platform Menu Links Navigate Correctly | Loops through the Platform links listed in the navigation data file, checks each href, clicks each link/button, and verifies navigation to the expected destination | Each Platform link/button navigates to the expected page |
+| AUTO-004 | Test Solutions Menu | Opens the Solutions dropdown and checks that the expected Solutions links are present and have valid href values | Solutions dropdown opens and expected links are present |
+| AUTO-005 | Test Solutions Menu Links Navigate Correctly | Loops through the Solutions links listed in the navigation data file, checks each href, clicks each link/button, and verifies navigation to the expected destination | Each Solutions link/button navigates to the expected page |
+| AUTO-006 | Test Why Darktrace Menu | Opens the Why Darktrace dropdown and checks that the expected Why Darktrace links are present and have valid href values | Why Darktrace dropdown opens and expected links are present |
+| AUTO-007 | Test Why Darktrace Menu Links Navigate Correctly | Loops through the Why Darktrace links listed in the navigation data file, checks each href, clicks each link/button, and verifies navigation to the expected destination | Each Why Darktrace link/button navigates to the expected page |
+| AUTO-008 | Test Resources Menu | Opens the Resources dropdown and checks that the expected Resources links are present and have valid href values | Resources dropdown opens and expected links are present |
+| AUTO-009 | Test Resource Menu Links Navigate Correctly | Loops through the Resources links listed in the navigation data file, checks each href, clicks each link/button, and verifies navigation to the expected destination | Each Resources link/button navigates to the expected page |
+| AUTO-010 | Test Get A Demo Hyperlink | Checks that the Get a Demo topbar button has a valid href, is not a placeholder link, can be clicked, and navigates to the expected demo page | Get a Demo button navigates to the demo page |
+| AUTO-011 | Test Navigation Resources Load Under A Second | Checks that the main navigation and selected dropdown content are available within one second | Required navigation content loads within the expected time |
 
-- CAPTCHA solving.
-- Production form submission unless a safe test environment is provided.
-- Pixel-perfect design comparison.
-- Deep content validation of every linked product/resource page.
-- Tests that rely heavily on generated CSS class names.
+### Notes on automated coverage
+
+The automation validates the four main areas requested in the brief:
+
+- **Logo image**: the logo is checked for visibility, correctness, load time, hyperlink validity, and navigation to the homepage.
+- **Dropdown menus**: the Platform, Solutions, Why Darktrace, and Resources dropdowns are opened and checked.
+- **Hyperlinks**: expected links are checked for non-empty href values and invalid placeholder values such as `#` or `javascript`.
+- **Buttons**: navigation buttons and CTA-style links are clicked and checked to confirm that they navigate to the expected destination.
+
+The test suite uses loops for the menu link navigation tests. If one link fails, the test continues checking the remaining links and records the failed item in the Robot Framework report.
 
 ---
 
@@ -394,16 +379,15 @@ Not good candidates for automation:
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Live site content changes often | Automated tests become flaky or fail for non-functional reasons | Use requirement-driven checks and stable selectors based on visible text and valid hrefs. |
-| Exact URLs change for marketing reasons | Tests fail even though user journey still works | Validate meaningful destination patterns or non-placeholder links unless exact URLs are required. |
+| Live site content changes often | Automated tests become flaky or fail for non-functional reasons | Store expected destinations in a separate navigation data file and update it when the live nav changes. |
+| Exact URLs change for marketing reasons | Tests fail even though user journey still works | Validate meaningful destination patterns and keep expected URLs easy to maintain. |
 | Hover menus are difficult to automate reliably | CI failures may become flaky | Use explicit waits, desktop viewport, and repeatable hover actions. |
 | Cookie banner interferes with navigation | Tests fail before feature is reached | Add a safe cookie-accept helper in automation. |
-| CAPTCHA blocks automation | Automated form submission is not possible | Validate CAPTCHA presence only and avoid bypass attempts. |
-| Ambiguous demo form behaviour | Tests may check page when product expects modal, or the reverse | Clarify expected behaviour before final sign-off. |
-| Performance target is too broad | Unclear pass/fail criteria | Agree whether one-second requirement applies to nav visibility, dropdowns, linked pages, or all resources. |
-| Generated CSS selectors change | Tests become brittle | Avoid class-based selectors where possible. |
-| Production form submissions create real leads | Spam or polluted CRM data | Do not submit forms in production. Use staging/test data only. |
-| Accessibility not considered in hover-only menus | Keyboard and screen-reader users may be blocked | Include keyboard and accessible-name checks. |
+| CAPTCHA blocks automation | Automated form submission is not possible | Do not attempt production form submission; validate only the topbar navigation path. |
+| Performance target is too broad | Unclear pass/fail criteria | Treat the automated one-second check as a navigation content availability check rather than a full performance audit. |
+| Generated CSS selectors change | Tests become brittle | Avoid class-based selectors where possible and prefer text/href-based checks. |
+| Hidden mobile navigation duplicates are present | Tests may interact with hidden or incorrect elements | Exclude mobile navigation elements in locators where needed. |
+| Accessibility not considered in hover-only menus | Keyboard and screen-reader users may be blocked | Include accessibility checks manually or expand automation later if required. |
 
 ---
 
@@ -412,21 +396,22 @@ Not good candidates for automation:
 ### Entry criteria
 
 - Functional requirements are reviewed.
-- Scope exclusions are confirmed, especially `Company` and `Partners`.
-- Expected product and resource lists are agreed.
-- Demo form behaviour is clarified: page, modal, or embedded form.
-- Performance expectation is clarified.
+- Scope exclusions are confirmed, especially `Partners`.
+- Expected navigation menus and link destinations are agreed or captured in the navigation data file.
+- Performance expectation is interpreted for navigation and dropdown availability.
 - Test environment is available.
 - Supported browsers are confirmed.
 - Automation framework and CI execution approach are agreed.
 
 ### Exit criteria
 
-- All critical and high-priority functional tests pass.
+- All critical and high-priority navigation tests pass.
 - Required navigation items are visible and usable.
 - Required hover menus open reliably.
-- Required product and resource links are present and valid.
-- Demo request page/form contains the required fields and controls.
+- Required navigation links are present and valid.
+- Required navigation links/buttons navigate to the expected destinations.
+- The logo links back to the homepage.
+- The `Get a demo` button navigates to the expected demo request page.
 - No open critical or high-severity defects remain.
 - Non-functional checks for accessibility, usability, compatibility, security, and performance are complete or risk-accepted.
 - Automated checks are added to CI or prepared for CI integration.
@@ -440,7 +425,7 @@ I would approach this as a shared quality responsibility across the sprint, rath
 
 ### Design/refinement phase
 
-During refinement, I would review the supplied requirements with the PO, BA, Designer, and Developers. The main areas I would clarify are the exact expected navigation items, whether additional live-site items should be ignored, what the correct link destinations are, and whether the `Get a Demo` form should open as a page, modal, or embedded form.
+During refinement, I would review the supplied requirements with the PO, BA, Designer, and Developers. The main areas I would clarify are the exact expected navigation items, whether additional live-site items should be ignored, what the correct link destinations are, and what behaviour is expected from the topbar `Get a demo` button.
 
 I would also ask the team to clarify the one-second performance requirement, because it could mean homepage navigation visibility, dropdown loading, linked page loading, or all resources. Without this clarification, the test result could be interpreted differently by different people.
 
@@ -452,7 +437,7 @@ I would also prepare the Robot Framework/SeleniumLibrary test structure early, s
 
 ### Testing phase
 
-As the feature becomes available, I would test it in small increments. I would first confirm that the homepage and core nav elements are visible, then test the hover menus, then validate the links, and finally test the demo request path.
+As the feature becomes available, I would test it in small increments. I would first confirm that the homepage and core nav elements are visible, then test the hover menus, then validate the links and buttons.
 
 Any defects would be raised with clear reproduction steps, expected vs actual behaviour, browser details, screenshots or video where useful, and a severity based on user impact.
 

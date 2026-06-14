@@ -15,7 +15,7 @@ The automated tests focus on the areas requested in the work sample:
 * Hyperlinks
 * Buttons / CTA-style navigation actions
 
-The tests are written using Robot Framework and SeleniumLibrary, and are designed to run in a CI/CD pipeline using GitHub Actions and Docker.
+The tests are written using Robot Framework and SeleniumLibrary, and are designed to run in a CI/CD pipeline using GitHub Actions and Docker. This was a choice due to limitations of my machine.
 
 ---
 
@@ -148,7 +148,7 @@ The Robot reports are uploaded as a GitHub Actions artifact after each run.
 
 A section on running through docker locally is not included, as my PC that I used to work on this project is unable to have docker running on it for several reasons.
 
-With that in mind, I used github actions, as can be ssen with the .github/workflows folder.
+With that in mind, I used github actions, as can be seen with the .github/workflows folder.
 
 ---
 

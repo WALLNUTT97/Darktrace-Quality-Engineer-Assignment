@@ -226,7 +226,7 @@ Test Resources Menu
     Menu Should Contain Links    @{resources_links}
 
 
-Test Resource Menu Links Navigate Correctly
+Test Resources Menu Links Navigate Correctly
     Prepare Test
 
     FOR    ${link_text}    ${expected_url_part}    IN    &{resources_links}
